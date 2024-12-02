@@ -1,0 +1,51 @@
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+quiz_data = [
+    {"question": "Come si chiama la nostra prima canzone?", "answers": ["Drip&chill", "Drip&drill", "Chill&relax"], "correct": "Drip&chill"},
+    {"question": "In quanti eravamo all'inizio?", "answers": ["3", "6", "5"], "correct": "5"},
+    {"question": "Qual è il nostro genere principale?", "answers": ["Poprock", "Trap", "Pop"], "correct": "Poprock"},
+    {"question": "Chi è il batterista?", "answers": ["Andrea", "Sebasthian"], "correct": "Sebasthian"},
+    {"question": "All'inizio di Drip&chill che strumento c'è?", "answers": ["Basso", "Chitarra", "Batteria"], "correct": "Batteria"},
+    {"question": "Quando è nata la band?", "answers": ["Luglio 2023", "Ottobre 2024", "Luglio 2024"], "correct": "Luglio 2023"}
+]
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if username and password:
+        return jsonify(success=True)
+    return jsonify(success=False)
+
+@app.route('/quiz')
+def quiz():
+    return jsonify(quiz_data)
+
+@app.route('/check_answer', methods=['POST'])
+def check_answer():
+    question_index = int(request.form.get('question_index'))
+    user_answer = request.form.get('user_answer')
+    correct_answer = quiz_data[question_index]['correct']
+    if user_answer == correct_answer:
+        return jsonify(correct=True)
+    return jsonify(correct=False)
+
+@app.route('/leaderboard')
+def leaderboard():
+    leaderboard_data = [
+        {"user": "Utente 1", "points": 120},
+        {"user": "Utente 2", "points": 110},
+        {"user": "Utente 3", "points": 100}
+    ]
+    return jsonify(leaderboard_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
